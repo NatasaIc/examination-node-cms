@@ -1,16 +1,16 @@
 import express from 'express';
-import { CMSClient } from '../clients/cms_client';
-import { TelevisionController } from '../controllers/televisionController
+import { createTelevision, deleteTelevision, getTelevision, getTelevisions, updateTelevision } from '../service/cmsService';
+import { forceAuthorize } from '../middleware/forceAuthorize';
 
-const client = new CMSClient()
-const controller = new TelevisionController(client)
 
 const televisionRouter = express.Router();
 
-televisionRouter.get('/', controller.getTelevisions.bind(controller))
-.get('/:id', controller.getTelevision.bind(controller))
-.put('/', controller.createTelevision.bind(controller))
-.put('/:id', controller.updateTelevision.bind(controller))
-.delete('/:id', controller.deleteTelevision.bind(controller))
+televisionRouter
+.get('/', getTelevisions)
+.get('/:id', getTelevision)
+.post('/', forceAuthorize, createTelevision)
+.put('/:id', forceAuthorize, updateTelevision)
+.delete('/:id', forceAuthorize, deleteTelevision)
 
 export default televisionRouter
+ 

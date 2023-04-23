@@ -1,16 +1,16 @@
 import express from 'express';
-import { CMSClient } from '../clients/cms_client';
-import { MobileController } from '../controllers/mobileController';
+import { createMobile, deleteMobile, getMobile, getMobiles, updateMobile } from '../service/cmsService';
+import { forceAuthorize } from '../middleware/forceAuthorize';
 
-const client = new CMSClient()
-const controller = new MobileController(client)
 
 const mobileRouter = express.Router();
 
-mobileRouter.get('/', controller.getMobiles.bind(controller))
-.get('/:id', controller.getMobile.bind(controller))
-.put('/', controller.createMobile.bind(controller))
-.put('/:id', controller.updateMobile.bind(controller))
-.delete('/:id', controller.deleteMobile.bind(controller))
+mobileRouter
+.get('/', getMobiles)
+.get('/:id', getMobile)
+.post('/', forceAuthorize, createMobile)
+.put('/:id', forceAuthorize, updateMobile)
+.delete('/:id', forceAuthorize, deleteMobile)
 
 export default mobileRouter
+ 

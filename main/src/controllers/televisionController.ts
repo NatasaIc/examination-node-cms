@@ -1,44 +1,56 @@
-import { Request, Response } from "express";
-import { CMSClient } from "../clients/cms_client";
-import { Television } from "../models/television";
+import { Request, Response, json } from "express";
+import { Television, TelevisonSingle } from "../models/television";
+import { createTelevision, deleteTelevision, getTelevision, getTelevisions, updateTelevision } from "../service/cmsService";
 
-export class TelevisionController {
-    private client: CMSClient
-    constructor(client: CMSClient) {
-        this.client = client
+
+    export const getAllTelevisions = async (req: Request, res: Response) => {
+        let data = await getTelevisions()
+        data ? res.send(data) : res.sendStatus(400);
     }
 
-    public async getTelevisions(req: Request, res: Response) {
-        const data = await this.client.getTelevisions()
-        res.send(data.data)
-    }
-
-    public async getTelevision(req: Request, res: Response) {
-        const id = +req.params.id
-        const data = await this.client.getTelevision(id)
-        res.send(data)
-    }
-
-    public async createTelevision(req: Request, res: Response) {
-        const televisionData: Television = req.body
-        const data: Television = await this.client.createTelevision(televisionData)
-        res.send(data)
-    }
-
-    public async updateTelevision(req: Request, res: Response) {
-        const id: number = +req.params.id
-        const televisionData: Television = req.body
-        const data: Television = await this.client.updateTelevision(id, televisionData)
-        res.send(data)
-    }
-
-    public async deleteTelevision(req: Request, res: Response) {
-        const id = +req.params.id
-        try {
-            await this.client.deleteTelevision(id)
-            res.sendSatus(200)
-        } catch (error) {
-            res.sendSatus(500)
+    export const getOneTelevision = async (req: Request, res: Response) => {
+        let id = +req.params.id
+        if (id) {
+            let data = await getTelevision(id)
+            data ? res.json(data.data) : res.sendStatus(500);
+        } else {
+            res.status(404).json({ message: `Product with id ${id} not found` })
         }
     }
-}
+
+    export const createNewTelevision = async (req: Request, res: Response) => {
+        let newTelevision = req.body as TelevisonSingle;
+        if (!newTelevision.data.product_name || !newTelevision.data.description || !newTelevision.data.manufacturer || !newTelevision.data.price || !newTelevision.data.screen_size) {
+            res.send(400);
+            return;
+        } try {
+            await createTelevision(newTelevision);
+            res.sendStatus(201);
+        } catch (e) {
+            res.status(500)
+        }
+    }
+
+    export const editTelevision = async (req: Request, res: Response) => {
+        let id = +req.params.id
+        let updatedTelevision = req.body as TelevisonSingle;
+        if (updatedTelevision.data.id !== id) {
+            res.status(400).json({ message: `Product ID in request body (${updatedTelevision.data.id}) does not match product ID in URL (${id})` })
+            return;
+        } try {
+            await updateTelevision(id, updatedTelevision)
+            res.json(id)
+        } catch (e) {
+            res.status(404).json({ message: `Product with id ${id} not found` })
+        }
+    }
+
+    export const removeTelevision = async (req: Request, res: Response) => {
+        const id = +req.params.id
+        try {
+            await deleteTelevision(id)
+            res.json({ message: `Product with id ${id} deleted successfully` })
+        } catch (e) {
+            res.status(500).json({ message: `Product with id ${id} not found` })
+        }
+    }

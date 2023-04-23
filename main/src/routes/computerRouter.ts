@@ -1,16 +1,16 @@
 import express from 'express';
-import { CMSClient } from '../clients/cms_client';
-import { ComputerController } from '../controllers/computerController';
+import { createComputer, deleteComputer, getComputer, getComputers, updateComputer } from '../service/cmsService';
+import { forceAuthorize } from '../middleware/forceAuthorize';
 
-const client = new CMSClient()
-const controller = new ComputerController(client)
 
 const computerRouter = express.Router();
 
-computerRouter.get('/', controller.getComputers.bind(controller))
-.get('/:id', controller.getComputer.bind(controller))
-.put('/', controller.createComputer.bind(controller))
-.put('/:id', controller.updateComputer.bind(controller))
-.delete('/:id', controller.deleteComputer.bind(controller))
+computerRouter
+.get('/', getComputers)
+.get('/:id', getComputer)
+.post('/', forceAuthorize, createComputer)
+.put('/:id', forceAuthorize, updateComputer)
+.delete('/:id', forceAuthorize, deleteComputer)
 
 export default computerRouter
+ 

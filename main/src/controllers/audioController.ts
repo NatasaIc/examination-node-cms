@@ -1,45 +1,57 @@
 import { Request, Response } from "express";
-import { CMSClient } from "../clients/cms_client";
-import { Audio } from "../models/audio";
+import { Audio, AudioSingle } from "../models/audio";
+import { getAudios, getAudio, createAudio, deleteAudio, updateAudio} from "../service/cmsService"
 
-export class AudioController {
-    private client: CMSClient
-    constructor(client: CMSClient) {
-        this.client = client
+
+    export const getAllAudios = async (req: Request, res: Response) => {
+        let data = await getAudios()
+        data ? res.send(data) : res.sendStatus(400);
     }
 
-    public async getAudios(req: Request, res: Response) {
-        const data = await this.client.getAudios()
-        res.send(data)
-    }
-
-    public async getAudio(req: Request, res: Response) {
-        const id = +req.params.id
-        const data = await this.client.getAudio(id)
-        res.send(data)
-    }
-
-    public async createAudio(req: Request, res: Response) {
-        const audioData: Audio = req.body
-        const data: Audio = await this.client.createAudio(audioData)
-        res.send(data)
-    }
-
-    public async updateAudio(req: Request, res: Response) {
-        const id: number = +req.params.id
-        const audioData: Audio = req.body
-        const data: Audio = await this.client.updateAudio(id, audioData)
-        res.send(data)
-    }
-
-    public async deleteAudio(req: Request, res: Response) {
-        const id = +req.params.id
-        try {
-            await this.client.deleteAudio(id)
-            res.sendSatus(200)
-        } catch (error) {
-            res.sendSatus(500)
+    export const getOneAudio = async (req: Request, res: Response) => {
+        let id = +req.params.id
+        if (id) {
+            let data = await getAudio(id)
+            data ? res.json(data.data) : res.sendStatus(500);
+        } else  {
+            res.status(404).json({ message: `Product with id ${id} not found` })
         }
     }
 
-}
+    export const createNewAudio = async (req: Request, res: Response) => {
+        let newAudio = req.body as AudioSingle;
+        if (!newAudio.data.product_name || !newAudio.data.description || !newAudio.data.manufacturer || !newAudio.data.price) {
+          res.send(400);
+          return;   
+        } try {
+            await createAudio(newAudio);
+            res.sendStatus(201);
+        } catch (e) {
+            res.status(500);
+        }
+    }
+
+
+    export const editAudio = async (req: Request, res: Response) => {
+        let id = +req.params.id
+        let updatedAudio = req.body as AudioSingle;
+        if (updatedAudio.data.id !== id) {
+            res.status(400).json({ message: `Product ID in request body (${updatedAudio.data.id}) does not match product ID in URL (${id})` });
+            return;
+        } try {
+            await updateAudio(id, updatedAudio)
+            res.json(id)
+        } catch (e) {
+            res.status(404).json({ message: `Product with id ${id} not found` })
+        }
+    }
+
+    export const removeAudio = async (req: Request, res: Response) => {
+        const id = +req.params.id
+        try {
+            await deleteAudio(id)
+            res.json({ message: `Product with id ${id} deleted successfully` })
+        } catch (e) {
+            res.status(500).json({ message: `Product with id ${id} not found` })
+        }
+    }

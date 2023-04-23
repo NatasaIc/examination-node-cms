@@ -1,24 +1,27 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import audioRouter from "./routes/audioRouter";
 import computerRouter from "./routes/computerRouter";
 import mobileRouter from "./routes/mobileRouter";
 import televisionRouter from "./routes/televisionRouter";
+import { userRouter } from "./routes/userRouter";
+import { authorization } from "./middleware/setLoginStatus";
 
 const app = express()
+const PORT = 8008;
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
+app.use(authorization);
+app.use("/users", userRouter);
 app.use('/audios', audioRouter)
 app.use('/computers', computerRouter)
 app.use('/mobiles', mobileRouter)
 app.use('/televisions', televisionRouter)
 
-app.get('/', (req: any, res: any) => {
-    res.send("Hello")
+app.get('/', (req: any, res:Response) => {
+    res.send(req.user)
 })
 
-app.listen(8008, () => {
-    console.log("http://localhost:8008");
-    
+app.listen(PORT, () => {
+console.log(`http://localhost:${PORT}`);
 })

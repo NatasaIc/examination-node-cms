@@ -1,17 +1,16 @@
 import express from 'express';
-import { CMSClient } from '../clients/cms_client';
-import { AudioController } from '../controllers/audioController';
+import { getAudio, getAudios, createAudio, updateAudio, deleteAudio } from '../service/cmsService';
+import { forceAuthorize } from '../middleware/forceAuthorize';
 
-const client = new CMSClient()
-const controller = new AudioController(client)
 
 const audioRouter = express.Router();
 
-audioRouter.get('/', controller.getAudios.bind(controller))
-.get('/:id', controller.getAudio.bind(controller))
-.put('/', controller.createAudio.bind(controller))
-.put('/:id', controller.updateAudio.bind(controller))
-.delete('/:id', controller.deleteAudio.bind(controller))
+audioRouter
+.get('/', getAudios)
+.get('/:id', getAudio)
+.post('/', forceAuthorize, createAudio)
+.put('/:id', forceAuthorize, updateAudio)
+.delete('/:id', forceAuthorize, deleteAudio)
 
 export default audioRouter
  
