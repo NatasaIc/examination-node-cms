@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
 dotenv.config();
 
+const SECRET_KEY = "secret-phrase" as any;
+
 export const hashPassword = (password: string) => {
     const hashValue = bcrypt.hashSync(password, 8)
     return hashValue
@@ -16,14 +18,14 @@ export const comparePassword = (password: string, hash: string) => {
 
 export const getJWTToken = (account: User) => {
     const userData = { userId: account.id, username: account.username }
-    const accessToken = jwt.sign(userData, process.env.JWT_SECRET as any)
+    const accessToken = jwt.sign(userData, SECRET_KEY)
     return accessToken
 }
 
 export const verifyJWT = (token: string) => {
-    return jwt.verify(token, process.env.JWT_SECRET as any)
+    return jwt.verify(token, SECRET_KEY)
 }
 
 export const decodeJWT = (token: string) => {
-    return jwt.decode(token, process.env.JWT_SECRET as any)
+    return jwt.decode(token, SECRET_KEY)
 }

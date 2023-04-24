@@ -1,16 +1,17 @@
 import express from 'express';
-import { createComputer, deleteComputer, getComputer, getComputers, updateComputer } from '../service/cmsService';
 import { forceAuthorize } from '../middleware/forceAuthorize';
+import { createNewComputer, editComputer, getAllComputers, getOneComputer, removeComputer } from '../controllers/computerController';
+
 
 
 const computerRouter = express.Router();
 
 computerRouter
-.get('/', getComputers)
-.get('/:id', getComputer)
-.post('/', forceAuthorize, createComputer)
-.put('/:id', forceAuthorize, updateComputer)
-.delete('/:id', forceAuthorize, deleteComputer)
+.get('/', getAllComputers)
+.get('/:id', getOneComputer)
+.post('/', forceAuthorize, createNewComputer)
+.put('/:id', forceAuthorize, editComputer)
+.delete('/:id', forceAuthorize, removeComputer)
 
 export default computerRouter
  

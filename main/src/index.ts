@@ -4,7 +4,7 @@ import computerRouter from "./routes/computerRouter";
 import mobileRouter from "./routes/mobileRouter";
 import televisionRouter from "./routes/televisionRouter";
 import { userRouter } from "./routes/userRouter";
-import { authorization } from "./middleware/setLoginStatus";
+import { authorization } from "./middleware/forceAuthorize";
 
 const app = express()
 const PORT = 8008;
