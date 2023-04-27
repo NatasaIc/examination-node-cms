@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3';
 const db = new sqlite3.Database('database.db')
 
-const createQuery =
+const query =
 `
     CREATE TABLE IF NOT EXISTS accounts (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -10,7 +10,7 @@ const createQuery =
         CONSTRAINT uniqueUsername UNIQUE(username)
     )
 `;
-db.run(createQuery);
+db.run(query);
 
 export const registerUser = (username: string, hashedPassword:string, callback:any) => {
     const query = `

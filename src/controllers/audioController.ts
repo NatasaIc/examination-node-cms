@@ -12,7 +12,7 @@ import { getAudios, getAudio, createAudio, deleteAudio, updateAudio} from "../se
         let id = +req.params.id
         if (id) {
             let data = await getAudio(id)
-            data ? res.json(data.data) : res.sendStatus(500);
+            data ? res.json(data) : res.sendStatus(500);
         } else  {
             res.status(404).json({ message: `Product with id ${id} not found` })
         }

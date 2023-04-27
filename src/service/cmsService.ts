@@ -1,15 +1,15 @@
 import axios from "axios";
-import { Audio, AudioSingle} from "../models/audio";
+import { Audio, AudioSingle, Audios} from "../models/audio";
 import { Computer, ComputerSingle } from "../models/computer";
 import { Mobile, MobileSingle } from "../models/mobile";
 import { Television, TelevisonSingle } from "../models/television";
 
 
 
-const baseURL = "http://localhost:1337/api";
+const baseURL = "http://127.0.01:1337/api";
 
 /***************Audio GET POST PUT DELETE***************/
-export const getAudios = async () => {
+export const getAudios = async (): Promise<Audio> => {
     const response = await axios.get<Audio>(`${baseURL}/audios`)
     return response.data;
 };

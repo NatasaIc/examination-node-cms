@@ -12,7 +12,7 @@ const PORT = 8008;
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(authorization);
-app.use("/users", userRouter);
+app.use('/users', userRouter);
 app.use('/audios', audioRouter)
 app.use('/computers', computerRouter)
 app.use('/mobiles', mobileRouter)

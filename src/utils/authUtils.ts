@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import * as dotenv from "dotenv";
 dotenv.config();
 
+
 const SECRET_KEY = "secret-phrase" as any;
 
 export const hashPassword = (password: string) => {
