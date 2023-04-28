@@ -3,16 +3,17 @@ import audioRouter from "./routes/audioRouter";
 import computerRouter from "./routes/computerRouter";
 import mobileRouter from "./routes/mobileRouter";
 import televisionRouter from "./routes/televisionRouter";
-import { userRouter } from "./routes/userRouter";
-import { authorization } from "./middleware/forceAuthorize";
+import { adminRouter } from "./routes/adminRouter";
+import { authorization } from "./middleware/setLoginStatus";
 
 const app = express()
 const PORT = 8008;
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+
 app.use(authorization);
-app.use('/users', userRouter);
+app.use('/admin', adminRouter);
 app.use('/audios', audioRouter)
 app.use('/computers', computerRouter)
 app.use('/mobiles', mobileRouter)
